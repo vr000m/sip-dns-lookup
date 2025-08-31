@@ -1,0 +1,23 @@
+# pyproject.toml
+
+[project]
+name = "sip-dns-lookup"
+version = "0.1.0"
+description = "Script to query SIP-related DNS records (NAPTR, SRV) for a given domain."
+authors = [
+    { name = "vr000m" }
+]
+license = { file = "LICENSE" }
+readme = "README.md"
+requires-python = ">=3.7"
+dependencies = [
+    "dnspython>=2.0.0"
+]
+
+[project.urls]
+Homepage = "https://github.com/vr000m/sip-dns-lookup"
+
+[tool.setuptools]
+# If you want to package as a module, you can add:
+# packages = ["sip_dns_lookup"]
+

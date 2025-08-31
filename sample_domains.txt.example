@@ -1,0 +1,15 @@
+# Example SIP domains and addresses for testing
+# Copy this file to sample_domains.txt and add your own domains
+# Lines starting with # are ignored
+
+# Example direct domains
+sip.example.com
+sip.example.org
+
+# Example SIP addresses (domain will be extracted automatically)
+user@sip.example.com
+test@sip.example.org
+
+# You can add your own domains here:
+# sip.yourdomain.com
+# user@sip.yourdomain.com
