@@ -2,30 +2,24 @@
 import sys
 import os
 import argparse
-from sip_dns_lookup import query_naptr, query_srv, parse_naptr_for_sip
+import logging
+from typing import List, Dict, Any
+from sip_dns_lookup import query_naptr, query_srv, parse_naptr_for_sip, parse_sip_address
 
-def extract_domain_from_sip(sip_address):
-    """Extract domain from SIP address formats like user@domain or sip:user@domain"""
-    # Remove sip: prefix if present
-    address = sip_address.replace("sip:", "").strip()
-    
-    # Extract domain after @ symbol
-    if "@" in address:
-        domain = address.split("@")[1]
-        # Remove any port numbers or parameters
-        domain = domain.split(":")[0].split(";")[0].split(">")[0]
-        return domain
-    
-    # If no @, assume it's just a domain
-    return address
+# Set up logging
+logging.basicConfig(level=logging.WARNING, format='%(levelname)s: %(message)s')
+logger = logging.getLogger(__name__)
 
-def test_domain(domain):
-    """Test a single domain for SIP DNS records"""
+# Use the parse_sip_address function from main module to avoid duplication
+extract_domain_from_sip = parse_sip_address
+
+def test_domain(domain: str) -> Dict[str, Any]:
+    """Test a single domain for SIP DNS records."""
     print(f"\n{'='*60}")
     print(f"Testing: {domain}")
     print('='*60)
     
-    results = {
+    results: Dict[str, Any] = {
         'domain': domain,
         'naptr': False,
         'srv_tcp': False,
@@ -88,15 +82,22 @@ def test_domain(domain):
     
     return results
 
-def load_test_addresses(filename):
-    """Load test addresses from file"""
-    test_addresses = []
+def load_test_addresses(filename: str) -> List[str]:
+    """Load test addresses from file."""
+    test_addresses: List[str] = []
     if os.path.exists(filename):
-        with open(filename, 'r') as f:
-            for line in f:
-                line = line.strip()
-                if line and not line.startswith('#'):
-                    test_addresses.append(line)
+        try:
+            with open(filename, 'r', encoding='utf-8') as f:
+                for line_num, line in enumerate(f, 1):
+                    line = line.strip()
+                    if line and not line.startswith('#'):
+                        test_addresses.append(line)
+        except PermissionError:
+            logger.error(f"Permission denied reading file '{filename}'")
+        except UnicodeDecodeError:
+            logger.error(f"File '{filename}' contains invalid UTF-8 characters")
+        except IOError as e:
+            logger.error(f"Error reading file '{filename}': {e}")
     return test_addresses
 
 def main():
